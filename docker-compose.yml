@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    container_name: ai-resume-analyzer
+    ports:
+      - "8501:8501"
+    volumes:
+      - app_data:/app/data
+      - app_logs:/app/logs
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - DATABASE_PATH=data/database.db
+      - SCRAPER_HEADLESS=true
+      - LOG_LEVEL=INFO
+      - SESSION_TIMEOUT_HOURS=24
+      - MAX_RESUME_SIZE_MB=10
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  app_data:
+    driver: local
+  app_logs:
+    driver: local

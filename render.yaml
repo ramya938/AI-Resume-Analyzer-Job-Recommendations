@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: ai-resume-analyzer
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true --server.enableCORS false
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: DATABASE_PATH
+        value: /data/database.db
+      - key: SCRAPER_HEADLESS
+        value: "true"
+      - key: LOG_LEVEL
+        value: INFO
+      - key: SESSION_TIMEOUT_HOURS
+        value: "24"
+      - key: MAX_RESUME_SIZE_MB
+        value: "10"
+    disk:
+      name: app-data
+      mountPath: /data
+      sizeGB: 1
+    healthCheckPath: /
